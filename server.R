@@ -11,7 +11,7 @@ bat <- read_csv(batUrl,
                 locale=locale(encoding="CP932"))
 names(bat)[4] <- "Team"
 bat$ID <- paste(bat$Player_name, bat$Team) 
-# 16-17
+# 17-18
 # 前処理済み
 batUrl2 <- "https://raw.githubusercontent.com/SNiN-17/shine_on_your_hidden_players/master/career_bat.csv"
 career_bat <- read_csv(batUrl2, 
@@ -29,7 +29,7 @@ pit <- read_csv(pitUrl,
                 locale=locale(encoding="CP932"))
 names(pit)[4] <- "Team"
 pit$ID <- paste(pit$Player_name, pit$Team) 
-# 16-17, 前処理済み
+# 17-18, 前処理済み
 pitUrl2 <- "https://raw.githubusercontent.com/SNiN-17/shine_on_your_hidden_players/master/career_pit.csv"
 career_pit <- read_csv(pitUrl2, 
                        locale=locale(encoding="CP932"))

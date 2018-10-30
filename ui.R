@@ -11,13 +11,13 @@ shinyUI(navbarPage("不遇な選手を探せ! with Shiny",
                               
                               # Sidebar panel for inputs ----
                               sidebarPanel(
-                                p("データはNPB公式から. 17/10/12時点での更新分."),
-                                p("右端のDiffは16年以後に関して, 二軍でのPAから一軍でのPAを引いた数値."),
+                                p("データはNPB公式から. 18/10/31時点での更新分."),
+                                p("右端のDiffは17年以後に関して, 二軍でのPAから一軍でのPAを引いた数値."),
                                   
                                 
                                 # スライダーでサンプルの閾値を設定できるようにする 
                                 p("下のスライダーでDiffの打席数閾値や, 成績の範囲を変更したり, チームを指定して, 最近の二軍成績の割に一軍でのPAが少ない選手を選択できます."),
-                                p("初期タブ画面は該当する選手の2016年以後の二軍通算成績. 真ん中のタブで16-17データのプロットを, 右のタブでこれらの選手の2012年度以後の, 各年度での一軍と二軍の成績を確認できます."),
+                                p("初期タブ画面は該当する選手の2017年以後の二軍通算成績. 真ん中のタブで17-18データのプロットを, 右のタブでこれらの選手の2012年度以後の, 各年度での一軍と二軍の成績を確認できます."),
                                 p("プロットは対象データセット全体を箱ひげ図+黒でプロット、選択した選手を赤で上書き"),
 
                                 selectInput(inputId = "dataset",
@@ -54,7 +54,7 @@ shinyUI(navbarPage("不遇な選手を探せ! with Shiny",
                               mainPanel(
                                 # タブをつくって、そこにデータとプロットと参考文献を配置する
                                 tabsetPanel(type = "tabs",
-                                            tabPanel("2016以後通算ファーム成績", DT::dataTableOutput("view")),
+                                            tabPanel("2017以後通算ファーム成績", DT::dataTableOutput("view")),
                                             tabPanel("プロット", plotOutput("plot1")),
                                             tabPanel("対象選手の各年度, 各レベル成績", DT::dataTableOutput("view2")),
                                             tabPanel("Ref", htmlOutput("refs"))
