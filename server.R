@@ -6,12 +6,13 @@ library(reshape2)
 # githubから必要なデータを取得
 # 打撃成績から
 # 2012年以後
-batUrl <- "https://raw.githubusercontent.com/SNiN-17/farm_stats/master/NPB_batting_2012_onward.csv"
+batUrl <- "https://raw.githubusercontent.com/SNiN-17/farm_stats/master/NPB_batting_since2012.csv"
 bat <- read_csv(batUrl, 
                 locale=locale(encoding="CP932"))
 names(bat)[4] <- "Team"
 bat$ID <- paste(bat$Player_name, bat$Team) 
 # 16-17
+# 前処理済み
 batUrl2 <- "https://raw.githubusercontent.com/SNiN-17/shine_on_your_hidden_players/master/career_bat.csv"
 career_bat <- read_csv(batUrl2, 
                        locale=locale(encoding="CP932"))
@@ -22,12 +23,13 @@ batUrl4 <- "https://raw.githubusercontent.com/SNiN-17/shine_on_your_hidden_playe
 farmBat200 <- read_csv(batUrl4, 
                        locale=locale(encoding="CP932"))
 # 投手成績
-pitUrl <- "https://raw.githubusercontent.com/SNiN-17/farm_stats/master/NPB_pitching_2012_onward.csv"
+# 12年以後
+pitUrl <- "https://raw.githubusercontent.com/SNiN-17/farm_stats/master/NPB_pitching_since2012.csv"
 pit <- read_csv(pitUrl, 
                 locale=locale(encoding="CP932"))
 names(pit)[4] <- "Team"
 pit$ID <- paste(pit$Player_name, pit$Team) 
-# 16-17
+# 16-17, 前処理済み
 pitUrl2 <- "https://raw.githubusercontent.com/SNiN-17/shine_on_your_hidden_players/master/career_pit.csv"
 career_pit <- read_csv(pitUrl2, 
                        locale=locale(encoding="CP932"))
@@ -39,9 +41,11 @@ farmPit50 <- read_csv(pitUrl4,
                        locale=locale(encoding="CP932"))
 names(farmPit50)[5] <- "TBF"
 names(farmPit100)[5] <- "TBF"
+
+
 function(input, output) {
   
-  # Return the requested dataset ----
+  # Hitterについて ----
   initialInput <- reactive({
     switch(input$dataset,
            "100 PA以上" = farmBat100,
@@ -76,7 +80,7 @@ function(input, output) {
     
   })
   
-  
+  # テーブル1で表示するために形を整える
   thirdInput <- reactive({
     secondInput() %>%
       select(-c(3, 12)) %>%
@@ -84,6 +88,7 @@ function(input, output) {
     
   })
   
+  # 12年以後の各年度成績を形を整える
   fourthInput <- reactive({
     df <- secondInput() 
     selectedIDs <- df$ID
@@ -93,7 +98,7 @@ function(input, output) {
   })
   
   
-  # テーブル
+  # テーブル1
   output$view <- DT::renderDataTable({
     head(thirdInput(), input$obs)
   }, options = list(paging = FALSE)) 
@@ -103,6 +108,9 @@ function(input, output) {
       arrange(Level)
   }, options = list(paging = FALSE)) 
   
+  # プロット
+  # 選んでいるデータセット全体を箱ひげ図と、plotで描画
+  # その中の選択している選手を赤で上書きでplot
   output$plot1 <- renderPlot({
     df <- datasetInput() %>% select(-c(3, 12))
     df <- melt(df,
@@ -126,12 +134,10 @@ function(input, output) {
             axis.title = element_text(size = 15),
             strip.text = element_text(size=14)) +
       facet_wrap(~Stats_type, scales = "free", ncol = 2) +
-      labs(title = "16-17二軍における各指標のプロット.",
-           subtitle = "(対象データセット全体を箱ひげ図+黒でプロット、選択した選手を赤で上書き)",
-           caption = "Source: NPB公式 (2012年以後)", 
+      labs(caption = "Source: NPB official", 
            x = "Team", y = "Value") 
     gg
-  }, res = 72, width = 500 ,height = 900)
+  }, res = 72, width = 600 ,height = 1000)
   
   # 参考文献等
   output$refs <- renderUI({
@@ -139,12 +145,14 @@ function(input, output) {
     str2 <- "[2] wOBA係数@deltagraphs http://1point02.jp/op/gnav/glossary/discription/dis_bs_woba.html"
     str3 <- "[3] Shiny全般について ほくそえむ様によるチュートリアル翻訳版目次 http://d.hatena.ne.jp/hoxo_m/20151222/p1"
     str4 <- "[4] Rを使った野球統計全般 Marchi and Albert, Analyzing Baseball Data with R (2013; CRC press)."
-    str5 <- "[5] 中の人 https://twitter.com/sleep_in_nmbrs"
-    HTML(paste(str1, str2, str3, str4, str5, sep = '<br/>'))
+    str5 <- "[5] DER, wOBAの計算に関する補足 https://sleepnowinthenumbers.blogspot.jp/2017/09/blog-post_23.html"
+    str6 <- "[6] 中の人 https://twitter.com/sleep_in_nmbrs"
+    HTML(paste(str1, str2, str3, str4, str5, str6, sep = '<br/>'))
   })
   
   
-  # 投手側
+  # 投手側 ----
+  # 基本的に野手でやっていることと同様
   initialInput2 <- reactive({
     switch(input$dataset2,
            "50 IP以上" = farmPit50,
@@ -177,7 +185,7 @@ function(input, output) {
     
   })
   
-  
+  # table3 (16以後の通算) 用に整形
   thirdInput2 <- reactive({
     secondInput2() %>%
       select(-c(3, 13)) %>%
@@ -185,6 +193,7 @@ function(input, output) {
     
   })
   
+  # table4 (12年以後の各年度) 用に整形
   fourthInput2 <- reactive({
     df <- secondInput2() 
     selectedIDs <- df$ID
@@ -204,6 +213,7 @@ function(input, output) {
       arrange(Level)
   }, options = list(paging = FALSE)) 
   
+  # プロット
   output$plot2 <- renderPlot({
     df <- datasetInput2() %>% select(-c(3, 13))
     df <- melt(df,
@@ -227,20 +237,19 @@ function(input, output) {
             axis.title = element_text(size = 15),
             strip.text = element_text(size=14)) +
       facet_wrap(~Stats_type, scales = "free", ncol = 2) +
-      labs(title = "16-17二軍における各指標のプロット.",
-           subtitle = "(対象データセット全体を箱ひげ図+黒でプロット、選択した選手を赤で上書き)",
-           caption = "Source: NPB公式 (2012年以後)", 
+      labs(caption = "Source: NPB official",
            x = "Team", y = "Value") 
     gg
-  }, res = 72, width = 500 ,height = 800)
+  }, res = 72, width = 600 ,height = 1000)
   
   # 参考文献等
   output$refs2 <- renderUI({
     str1 <- "[1] NPB公式サイト http://npb.jp"
-    str2 <- "[2] wOBA係数@deltagraphs http://1point02.jp/op/gnav/glossary/discription/dis_bs_woba.html"
+    str2 <- "[2] FIPの計算@fangraphs http://www.fangraphs.com/library/pitching/fip/"
     str3 <- "[3] Shiny全般について ほくそえむ様によるチュートリアル翻訳版目次 http://d.hatena.ne.jp/hoxo_m/20151222/p1"
     str4 <- "[4] Rを使った野球統計全般 Marchi and Albert, Analyzing Baseball Data with R (2013; CRC press)."
-    str5 <- "[5] 中の人 https://twitter.com/sleep_in_nmbrs"
-    HTML(paste(str1, str2, str3, str4, str5, sep = '<br/>'))
+    str5 <- "[5] DER, wOBAの計算に関する補足 https://sleepnowinthenumbers.blogspot.jp/2017/09/blog-post_23.html"
+    str6 <- "[6] 中の人 https://twitter.com/sleep_in_nmbrs"
+    HTML(paste(str1, str2, str3, str4, str5, str6, sep = '<br/>'))
   })
 }
