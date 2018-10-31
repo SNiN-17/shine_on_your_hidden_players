@@ -21,7 +21,7 @@ shinyUI(navbarPage("不遇な選手を探せ! with Shiny",
                                 p("プロットは対象データセット全体を箱ひげ図+黒でプロット、選択した選手を赤で上書き"),
 
                                 selectInput(inputId = "dataset",
-                                            label = "対象データセット (2016-17の二軍での最低打席数):",
+                                            label = "対象データセット (2017-18の二軍での最低打席数):",
                                             choices = c("200 PA以上", "100 PA以上")),
                                 # 入力用スライダーをサイドバーに配置
                                 sliderInput("slider1", "wOBA:",
@@ -32,7 +32,7 @@ shinyUI(navbarPage("不遇な選手を探せ! with Shiny",
                                             min = 0, max = 50, value = c(0, 15)),
                                 sliderInput("slider5", "HRpct:",
                                             min = 0, max = 12.5, value = c(0, 12.5)),
-                                sliderInput("slider4", "2軍でのPA - 1軍でのPA (16, 17年):",
+                                sliderInput("slider4", "2軍でのPA - 1軍でのPA (17-18年):",
                                             min = -1000, max = 1000, value = c(0, 1000)),
                                 sliderInput("slider6", "TTO (いわゆるアダム・ダン率):",
                                             min = 0, max = 100, value = c(0, 100)),
@@ -70,15 +70,17 @@ shinyUI(navbarPage("不遇な選手を探せ! with Shiny",
                               
                               # 投手側のNavigation barの内容
                               sidebarPanel(
-                                p("データはNPB公式から. 17/9/17時点での更新分. 
-                                  右端のDiffは16年以後に関して, 二軍でのIPから一軍でのIPを引いた数値."),
+                                p("データはNPB公式から. 18/10/31時点での更新分. 
+                                  右端のDiffは17年以後に関して, 二軍でのIPから一軍でのIPを引いた数値."),
                                 
                                 #スライドバーでサンプルの閾値を設定できるようにする 
                                 p("下のスライダーでDiffのIP数閾値や, 成績の範囲を変更したり, チームを指定して, 最近の二軍成績の割に一軍でのIPが少ない選手を選択できます."),
-                                p("初期タブ画面は該当する選手の2016年以後の二軍通算成績. 真ん中のタブで16-17データのプロットを, 右のタブでこれらの選手の2012年度以後の、各年度での一軍と二軍の成績を確認できます."),
+                                p("初期タブ画面は該当する選手の2017年以後の二軍通算成績. 真ん中のタブで17-18データのプロットを, 右のタブでこれらの選手の2012年度以後の、各年度での一軍と二軍の成績を確認できます."),
+                                p("プロットは対象データセット全体を箱ひげ図+黒でプロット、選択した選手を赤で上書き"),
+                                
 
                                 selectInput(inputId = "dataset2",
-                                            label = "対象データセット (2016-17の二軍での最低IP数):",
+                                            label = "対象データセット (2017-18の二軍での最低IP数):",
                                             choices = c("50 IP以上", "100 IP以上")),
                                 # 入力名わかりにくい
                                 sliderInput("slider1_2", "FIP:",
@@ -89,7 +91,7 @@ shinyUI(navbarPage("不遇な選手を探せ! with Shiny",
                                             min = 0, max = 50, value = c(20, 50)),
                                 sliderInput("slider5_2", "K-BB:",
                                             min = 0, max = 30, value = c(15, 30)),
-                                sliderInput("slider4_2", "2軍でのIP - 1軍でのIP (16, 17年):",
+                                sliderInput("slider4_2", "2軍でのIP - 1軍でのIP (17-18年):",
                                             min = -400, max = 400, value = c(000, 400)),
                                 selectInput(inputId = "team2",
                                             label = "調べたいチーム:",
@@ -112,7 +114,7 @@ shinyUI(navbarPage("不遇な選手を探せ! with Shiny",
                               mainPanel(
                                 # タブをつくって、そこにデータ、プロットと参考文献を配置する
                                 tabsetPanel(type = "tabs",
-                                            tabPanel("2016以後通算ファーム成績", DT::dataTableOutput("view3")),
+                                            tabPanel("2017以後通算ファーム成績", DT::dataTableOutput("view3")),
                                             tabPanel("プロット", plotOutput("plot2")),
                                             tabPanel("対象選手の各年度, 各レベル成績", DT::dataTableOutput("view4")),
                                             tabPanel("Ref", htmlOutput("refs2"))

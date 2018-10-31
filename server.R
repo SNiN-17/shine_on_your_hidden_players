@@ -185,7 +185,7 @@ function(input, output) {
     
   })
   
-  # table3 (16以後の通算) 用に整形
+  # table3 (17以後の通算) 用に整形
   thirdInput2 <- reactive({
     secondInput2() %>%
       select(-c(3, 13)) %>%
